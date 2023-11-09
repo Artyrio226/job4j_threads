@@ -16,18 +16,42 @@ public class Wget implements Runnable {
         this.speed = speed;
     }
 
+    public static void validate(String[] args) {
+        if (args.length != 2) {
+            throw new IllegalArgumentException("Incorrect number of parameters");
+        }
+        try {
+            new URL(args[0]).toURI();
+        } catch (URISyntaxException | MalformedURLException ex) {
+            throw new RuntimeException("Invalid reference");
+        }
+        try {
+            int i = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid parameter");
+        }
+    }
+
     @Override
     public void run() {
         String extension = url.substring(url.lastIndexOf("."));
         var file = new File("tmp" + extension);
         try (var in = new URL(url).openStream();
-             var out = new FileOutputStream(file)) {
+            var out = new FileOutputStream(file)) {
             var dataBuffer = new byte[1024];
             int bytesRead;
+            int totalBytes = 0;
+            var startAt = System.currentTimeMillis();
             while ((bytesRead = in.read(dataBuffer, 0, dataBuffer.length)) != -1) {
-                var downloadAt = System.nanoTime();
                 out.write(dataBuffer, 0, bytesRead);
-                Thread.sleep((1024_000_000 / (System.nanoTime() - downloadAt) / speed));
+                totalBytes += bytesRead;
+                if (totalBytes >= speed) {
+                    long pause = 1000 - (System.currentTimeMillis() - startAt);
+                    if (pause > 0) {
+                        Thread.sleep(pause);
+                    }
+                    totalBytes = 0;
+                }
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -35,21 +59,9 @@ public class Wget implements Runnable {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        if (args.length != 2) {
-            throw new IllegalArgumentException("Incorrect number of parameters");
-        }
+        validate(args);
         String url = args[0];
-        try {
-            new URL(url).toURI();
-        } catch (URISyntaxException | MalformedURLException ex) {
-            throw new RuntimeException("Invalid reference");
-        }
-        int speed;
-        try {
-            speed = Integer.parseInt(args[1]);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid parameter");
-        }
+        int speed = Integer.parseInt(args[1]);
         Thread wget = new Thread(new Wget(url, speed));
         wget.start();
         wget.join();
