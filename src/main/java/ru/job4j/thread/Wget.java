@@ -51,6 +51,7 @@ public class Wget implements Runnable {
                         Thread.sleep(pause);
                     }
                     totalBytes = 0;
+                    startAt = System.currentTimeMillis();
                 }
             }
         } catch (IOException | InterruptedException e) {
