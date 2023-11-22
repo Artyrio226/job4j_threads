@@ -10,11 +10,11 @@ public class ParseFile {
         this.file = file;
     }
 
-    public String getContent() {
+    public synchronized String getContent() {
         return content(ch -> true);
     }
 
-    public String getContentWithoutUnicode() {
+    public synchronized String getContentWithoutUnicode() {
         return content(ch -> ch < 0x80);
     }
 
@@ -22,7 +22,7 @@ public class ParseFile {
         StringBuilder output = new StringBuilder();
         try (var i = new BufferedInputStream(new FileInputStream(file))) {
             int data;
-            while ((data = i.read()) > 0) {
+            while ((data = i.read()) != 1) {
                 if (filter.test((char) data)) {
                     output.append((char) data);
                 }
