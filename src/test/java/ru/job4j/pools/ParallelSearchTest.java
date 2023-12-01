@@ -6,8 +6,6 @@ import static org.assertj.core.api.Assertions.*;
 
 class ParallelSearchTest {
 
-    record Obj(int year, String name) { }
-
     @Test
     void whenTypeIsStringInLongArrayThenGet5() {
         String[] arr = new String[14];

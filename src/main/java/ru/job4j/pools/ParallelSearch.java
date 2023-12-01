@@ -16,19 +16,21 @@ public class ParallelSearch<T> extends RecursiveTask<Integer> {
         this.obj = obj;
     }
 
-    private static <T> int linearSearch(T[] array, int from, int to, T obj) {
+    private int linearSearch() {
+        int index = -1;
         for (int i = from; i <= to; i++) {
             if (obj.equals(array[i])) {
-                return i;
+                index = i;
+                break;
             }
         }
-        return -1;
+        return index;
     }
 
     @Override
     protected Integer compute() {
         if (to - from <= 10) {
-            return linearSearch(array, from, to, obj);
+            return linearSearch();
         }
         int mid = (from + to) / 2;
         var left = new ParallelSearch<>(array, from, mid, obj);
