@@ -7,9 +7,9 @@ public class RolColSum {
     public static Sums[] sum(int[][] matrix) {
         int n = matrix.length;
         Sums[] sums = new Sums[n];
-        int rowSum = 0;
-        int colSum = 0;
         for (int i = 0; i < n; i++) {
+            int rowSum = 0;
+            int colSum = 0;
             for (int j = 0; j < n; j++) {
                 rowSum += matrix[i][j];
                 colSum += matrix[j][i];
@@ -17,8 +17,6 @@ public class RolColSum {
             sums[i] = new Sums();
             sums[i].setRowSum(rowSum);
             sums[i].setColSum(colSum);
-            rowSum = 0;
-            colSum = 0;
         }
         return sums;
     }

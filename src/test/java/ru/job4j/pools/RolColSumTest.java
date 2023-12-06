@@ -18,6 +18,7 @@ class RolColSumTest {
                        {4, 5, 6, 7}};
         Sums[] sums = sum(mat);
         Sums[] asyncSums = asyncSum(mat);
-        assertThat(sums).isEqualTo(asyncSums);
+        assertThat(sums).isEqualTo(asyncSums)
+                        .hasSize(4);
     }
 }
